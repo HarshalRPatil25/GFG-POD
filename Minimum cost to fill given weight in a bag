@@ -1,1 +1,41 @@
 
+public class Solution {
+    /**
+     * This function calculates the minimum cost to buy exactly w kg of oranges.
+     *
+     * @param n     the number of different weight packets available
+     * @param w     the target weight to achieve
+     * @param cost  array where cost[i] represents the cost of an (i+1) kg packet
+     * @return      the minimum cost to buy exactly w kg of oranges, or -1 if impossible
+     */
+    public static int minimumCost(int n, int w, int[] cost) {
+        // dp[i] will hold the minimum cost to buy exactly i kg of oranges
+        int[] dp = new int[w + 1];
+        
+        // Initialize dp[0] to 0 since no cost is needed to buy 0 kg of oranges
+        dp[0] = 0;
+        
+        // Initialize the rest of dp array with a large value (Infinity)
+        for (int i = 1; i <= w; i++) {
+            dp[i] = Integer.MAX_VALUE;
+        }
+        
+        // Iterate through all possible weights from 1 to w
+        for (int i = 1; i <= w; i++) {
+            // Try every available packet weight j (1-based index)
+            for (int j = 1; j <= n; j++) {
+                // Check if the current packet j can be used (j kg <= i kg)
+                // and the cost of j kg packet is not -1 (unavailable)
+                // and the subproblem (i - j) is solvable (not Infinity)
+                if (j <= i && cost[j - 1] != -1 && dp[i - j] != Integer.MAX_VALUE) {
+                    // Update dp[i] to the minimum cost found
+                    dp[i] = Math.min(dp[i], dp[i - j] + cost[j - 1]);
+                }
+            }
+        }
+        
+        // If dp[w] is still Infinity, it means it's not possible to get exactly w kg
+        // Otherwise, return the computed minimum cost
+        return dp[w] == Integer.MAX_VALUE ? -1 : dp[w];
+    }
+}
